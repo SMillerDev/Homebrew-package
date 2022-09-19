@@ -1,0 +1,27 @@
+name: Build Homebrew package
+
+on:
+  push
+
+jobs:
+  build-intel:
+    runs-on: macos-12
+    env:
+      INSTALL_PATH: /usr/local/
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Build package
+        run: |
+         pkgbuild --root brew \
+                  --scripts scripts \
+                  --install-location "$INSTALL_PATH" \
+                  --identifier sh.brew.Homebrew \
+                  --min-os-version 11.0 \
+                  --filter .DS_Store \
+                  --version 1 Homebrew-x86_64.pkg
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Homebrew package (x86_64) 
+          path: Homebrew-x86_64.pkg
